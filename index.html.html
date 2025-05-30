@@ -1,0 +1,2785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM Events </title>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --accent: #ff006e;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+            .logo span {
+                color: var(--primary);
+            }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+            .nav-links li {
+                margin-left: 30px;
+            }
+
+            .nav-links a {
+                text-decoration: none;
+                color: var(--dark);
+                font-weight: 500;
+                transition: color 0.3s;
+            }
+
+                .nav-links a:hover {
+                    color: var(--primary);
+                }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+            .hamburger div {
+                width: 25px;
+                height: 3px;
+                background-color: var(--dark);
+                margin: 5px;
+                transition: all 0.3s ease;
+            }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('1.jpg') center/cover no-repeat;
+            color: white;
+            margin-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            outline: 2px solid white; /* Add white outline */
+            outline-offset: -2px; /* Keep it inside the button */
+        }
+
+            .btn:hover {
+                background-color: #2a76ef;
+            }
+
+        .btn.btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            margin-left: 15px;
+            color: white;
+        }
+
+            .btn.btn-outline:hover {
+                background-color: white;
+                color: var(--primary);
+            }
+
+       
+        /* Updated Service Card Styles */
+        .service-card {
+            position: relative;
+            height: 220px; /* Reduced from 300px */
+            width: 100%;
+            border-radius: 8px; /* Slightly reduced from 10px */
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px; /* Add spacing between cards */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+            .service-card:hover {
+                transform: translateY(-5px); /* Reduced from -10px for subtler effect */
+                box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            }
+
+        .service-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Reduced from 30px */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+            color: white;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-icon {
+            font-size: 32px; /* Reduced from 40px */
+            color: var(--primary);
+            margin-bottom: 15px; /* Reduced from 20px */
+        }
+
+        .service-card h3 {
+            font-size: 18px; /* Reduced from 22px */
+            margin-bottom: 10px; /* Reduced from 15px */
+            text-align: center;
+        }
+
+        .service-card p {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            font-size: 14px; /* Added smaller font size */
+            line-height: 1.4; /* Added for better readability */
+        }
+
+        /* Add grid layout for services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Additional responsive adjustments */
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+        /* Gallery Section */
+        .gallery {
+            padding: 80px 0;
+            background: var(--light);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+            .section-header h2 {
+                font-size: 3rem;
+                font-weight: 700;
+                background: var(--gradient);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 20px;
+            }
+
+            .section-header p {
+                font-size: 1.2rem;
+                color: #64748b;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+        /* Gallery Categories */
+        .gallery-categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 50px;
+        }
+
+        .gallery-category {
+            padding: 12px 24px;
+            background: var(--white);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-transform: capitalize;
+        }
+
+            .gallery-category:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                border-color: var(--primary);
+            }
+
+            .gallery-category.active {
+                background: var(--gradient);
+                color: var(--white);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            height: 280px;
+            transition: var(--transition);
+            cursor: pointer;
+            background: var(--white);
+        }
+
+            .gallery-item:hover {
+                transform: translateY(-8px);
+                box-shadow: var(--shadow-hover);
+            }
+
+            .gallery-item video,
+            .gallery-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: var(--transition);
+            }
+
+            .gallery-item:hover video,
+            .gallery-item:hover img {
+                transform: scale(1.05);
+            }
+
+        /* Media Indicator */
+        .media-indicator {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+            .media-indicator.video {
+                background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            }
+
+            .media-indicator.image {
+                background: linear-gradient(135deg, #00d2d3, #54a0ff);
+            }
+
+        /* Gallery Controls */
+        .gallery-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 3;
+        }
+
+        .gallery-item:hover .gallery-controls {
+            opacity: 1;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            color: var(--dark);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+            .control-btn:hover {
+                background: var(--white);
+                transform: scale(1.1);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            }
+
+            .control-btn.muted {
+                background: rgba(255, 107, 107, 0.9);
+                color: var(--white);
+            }
+
+        /* Gallery Overlay */
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 30px 20px 20px;
+            color: var(--white);
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .gallery-overlay p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(20px);
+        }
+
+            .fullscreen-modal.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+        .fullscreen-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-media-container {
+            width: 100%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+            .fullscreen-media-container video,
+            .fullscreen-media-container img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                border-radius: var(--border-radius);
+            }
+
+        .fullscreen-info {
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 30px;
+        }
+
+        .fullscreen-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .fullscreen-description {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            max-width: 600px;
+        }
+
+        .close-fullscreen {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: var(--white);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            z-index: 10001;
+        }
+
+            .close-fullscreen:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.1);
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+
+        /* See More Button */
+        .see-more-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .btn {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            }
+
+        /* Hidden items */
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section-header h2 {
+                font-size: 2.5rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+
+            .gallery-item {
+                height: 250px;
+            }
+
+            .gallery-categories {
+                gap: 8px;
+            }
+
+            .gallery-category {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+            }
+
+            .fullscreen-title {
+                font-size: 2rem;
+            }
+
+            .fullscreen-description {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-item {
+                height: 220px;
+            }
+
+            .control-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+        }
+        
+        .testimonials {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: #f5f7fa;
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--gray);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .author-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .author-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .contact {
+            padding: 100px 0;
+            background-color: #f5f7fa;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+        }
+        
+        .contact-info h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .contact-details {
+            margin-bottom: 30px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .contact-icon {
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 24px;
+        }
+        
+        .contact-text h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .contact-text p {
+            color: var(--gray);
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .contact-form textarea {
+            height: 150px;
+            resize: none;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-col h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background-color: var(--primary);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-col p {
+            margin-bottom: 15px;
+            color: #aaa;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #333;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            text-align: center;
+            color: #aaa;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .contact-grid,
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .nav-links {
+                position: absolute;
+                right: 0;
+                top: 80px;
+                background-color: white;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                transform: translateY(-150%);
+                transition: transform 0.5s ease;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hamburger.active .line1 {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+            
+            .hamburger.active .line2 {
+                opacity: 0;
+            }
+            
+            .hamburger.active .line3 {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid,
+            .testimonial-grid,
+             {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                display: block;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+            
+            .hero-content {
+                text-align: center;
+            }
+        }
+        * {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;}
+.mySlides {display: none;}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {font-size: 11px}
+}
+
+        /* Video Testimonial Styles */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .testimonial-card {
+            background-color: #f5f7fa;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+            .testimonial-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+        }
+
+            .video-container video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .video-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+
+        .mute-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .mute-btn:hover {
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+
+        .testimonial-content {
+            padding: 20px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--gray);
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+            .testimonial-text.expanded {
+                max-height: none;
+                -webkit-line-clamp: unset;
+            }
+
+        .read-more {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+
+            .author-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .author-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .testimonials-load-more {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-load-more {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .btn-load-more:hover {
+                background-color: #2a76ef;
+            }
+
+        .hidden-testimonial {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .testimonial-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .logo-img {
+            height: 50px; /* Adjust height as needed */
+            width: auto;
+            display: block;
+        }
+
+        
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#home" class="logo">
+                    <img src="lo7.png" alt="VM Events Logo" class="logo-img">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Creating Unforgettable Experiences</h1>
+                <p>VM Events specializes in crafting exceptional events that leave lasting impressions. From social gatherings to dream weddings, we handle every detail.</p>
+                <a href="#contact" class="btn">Get Started</a>
+                <a href="#gallery" class="btn btn-outline">View Our Work</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about" style="padding: 100px 0; background-color: #f5f7fa;">
+
+        <div class="container">
+            <div class="section-header">
+                <h2>About VM Events</h2>
+                <p>Learn more about our passion for creating exceptional events.</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;">
+                <div class="slideshow-container">
+
+                    <div class="mySlides fade">
+                        <div class="numbertext">1 / 3</div>
+                        <img src="2.jpg" style="width:100%">
+                        <div class="text">Caption Text</div>
+                    </div>
+
+                    <div class="mySlides fade">
+                        <div class="numbertext">2 / 3</div>
+                        <img src="wed8.jpg" style="width:100%">
+                        <div class="text">Caption Two</div>
+                    </div>
+
+                    <div class="mySlides fade">
+                        <div class="numbertext">3 / 3</div>
+                        <img src="3.jpg" style="width:100%">
+                        <div class="text">Caption Three</div>
+                    </div>
+
+                </div>
+                <br>
+
+                <div style="text-align:center">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 24px; margin-bottom: 20px; color: var(--primary);">Our Story</h3>
+                    <p style="margin-bottom: 20px; line-height: 1.8;">Founded in 2019, VM Events was born from a passion for creating memorable experiences. What started as a small team with big dreams has grown into a premier event management company known for creativity, attention to detail, and exceptional service.</p>
+                    <p style="margin-bottom: 20px; line-height: 1.8;">Our mission is simple: to transform your vision into reality while exceeding your expectations. We believe that every event tells a unique story, and we're dedicated to making yours unforgettable.</p>
+                    <h3 style="font-size: 24px; margin-bottom: 20px; margin-top: 30px; color: var(--primary);">Why Choose Us</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-check-circle" style="color: var(--primary); margin-right: 10px;"></i>
+                            <span>Experienced and passionate team of event specialists</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-check-circle" style="color: var(--primary); margin-right: 10px;"></i>
+                            <span>Personalized approach to every client and event</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-check-circle" style="color: var(--primary); margin-right: 10px;"></i>
+                            <span>Creative solutions and attention to detail</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center;">
+                            <i class="fas fa-check-circle" style="color: var(--primary); margin-right: 10px;"></i>
+                            <span>Strong network of trusted vendors and partners</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updated Services Section with Image Popup Effect -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Services</h2>
+                <p>We offer comprehensive event management solutions tailored to your specific needs.</p>
+            </div>
+            <div class="services-grid">
+                <!-- Wedding Service Card -->
+                <div class="service-card" data-filter="weddings">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>WEDDINGS</h3>
+                        <p>We turn your dream wedding into reality with meticulous planning, stunning designs, and flawless execution.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="wed2.png" alt="Wedding Services">
+                    </div>
+                </div>
+
+                <!-- Catering Service Card -->
+                <div class="service-card" data-filter="catering">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>CATERING</h3>
+                        <p>Elevate your event with our gourmet catering services, offering delicious cuisine and beautiful presentations.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="cat1.jpg" alt="Catering Services">
+                    </div>
+                </div>
+
+                <!-- Light & Sound Service Card -->
+                <div class="service-card" data-filter="light&sound">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h3>LIGHT&SOUND</h3>
+                        <p>Create the perfect atmosphere with our professional lighting and sound equipment for any occasion.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="mic1.jpg" alt="Light and Sound Services">
+                    </div>
+                </div>
+
+                <!-- Car Decoration Service Card -->
+                <div class="service-card" data-filter="car decoration">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3>CAR DECORATION</h3>
+                        <p>Make a grand entrance with our elegant and creative car decoration services for special events.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="car1.jpg" alt="Car Decoration Services">
+                    </div>
+                </div>
+
+                <!-- Juice & Tea Counters Service Card -->
+                <div class="service-card" data-filter="juice&tea counters">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <h3>JUICE&TEA COUNTERS</h3>
+                        <p>Refresh your guests with our custom juice and tea stations, offering a variety of delicious beverages.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="/api/placeholder/400/300" alt="Juice and Tea Counter Services">
+                    </div>
+                </div>
+
+                <!-- Birthday Service Card -->
+                <div class="service-card" data-filter="birthdays">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-pray"></i>
+                        </div>
+                        <h3>BAPTISM</h3>
+                        <p>Create unforgettable birthday celebrations with our themed decorations, entertainment, and catering services.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="bat1.jpg" alt="Birthday Event Services">
+                    </div>
+                </div>
+                <!-- Add the new Baptism service card to the services grid -->
+                <!-- Birthday Service Card -->
+                <div class="service-card" data-filter="baptism">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <h3>BIRTHDAYS</h3>
+                        <p>Create unforgettable birthday celebrations with our themed decorations, entertainment, and catering services.</p>
+                    </div>
+                    <div class="service-image">
+                        <img src="bat1.jpg" alt="Baptism Event Services">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Gallery</h2>
+                <p>Browse through our collection of memorable events that we've had the pleasure to organize.</p>
+            </div>
+
+            <div class="gallery-categories">
+                <div class="gallery-category active" data-filter="all">All</div>
+                <div class="gallery-category" data-filter="weddings">Weddings</div>
+                <div class="gallery-category" data-filter="catering">Catering</div>
+                <div class="gallery-category" data-filter="light&sound">Light&Sound</div>
+                <div class="gallery-category" data-filter="car decoration">Car Decoration</div>
+                <div class="gallery-category" data-filter="juice&tea counters">Juice&Tea Counters</div>
+                <div class="gallery-category" data-filter="baptism">Baptism</div>
+                <div class="gallery-category" data-filter="birthdays">Birthdays</div>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- WEDDINGS - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="weddings">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="wedv1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Wedding Ceremony Highlights</h4>
+                        <p>Beautiful moments captured during the ceremony</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="weddings">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="wed5.jpg" alt="Elegant Wedding Reception">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4></h4>
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="weddings">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="wed8.jpg" alt="Wedding Decoration">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Wedding Decoration</h4>
+                        <p>Stunning wedding decorations and setup</p>
+                    </div>
+                </div>
+
+                <!-- CATERING - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="catering">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="catv1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Live Cooking Station</h4>
+                        <p>Chefs preparing delicious food live at your event</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="catering">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="cat1.jpg" alt="Premium Catering Service">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Premium Catering Service</h4>
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="catering">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Buffet Setup">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Buffet Setup</h4>
+                        <p>Elegant buffet arrangements for large gatherings</p>
+                    </div>
+                </div>
+
+                <!-- LIGHT&SOUND - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="light&sound">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="li1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4></h4>
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="light&sound">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="mic1.jpg" alt="Concert Lighting">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4></h4>
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="light&sound">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Stage Production">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Stage Production</h4>
+                        <p>Full stage setup with lights and sound equipment</p>
+                    </div>
+                </div>
+
+                <!-- CAR DECORATION - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="car decoration">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Car Decoration Process</h4>
+                        <p>Watch our team beautifully decorate wedding cars</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="car decoration">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="car1.jpg" alt="Luxury Car Decoration">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Luxury Car Decoration</h4>
+                        <p>Elegant floral arrangements for wedding cars</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="car decoration">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Bridal Car Setup">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Bridal Car Setup</h4>
+                        <p>Special decoration for the bride and groom's car</p>
+                    </div>
+                </div>
+
+                <!-- JUICE&TEA COUNTERS - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="juice&tea counters">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Fresh Juice Making</h4>
+                        <p>Live juice preparation at your event</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="juice&tea counters">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Juice Counter Setup">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Juice Counter Setup</h4>
+                        <p>Fresh fruit juice counter with variety of options</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="juice&tea counters">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Tea Station">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Tea Station</h4>
+                        <p>Traditional tea counter with multiple varieties</p>
+                    </div>
+                </div>
+
+                <!-- BAPTISM - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="baptism">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Baptism Ceremony</h4>
+                        <p>Sacred baptism ceremony organization</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="baptism">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="bat1.jpg" alt="Baptism Decoration">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Baptism Decoration</h4>
+                        <p>Beautiful decorations for baptism ceremonies</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="baptism">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Baptism Setup">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Baptism Setup</h4>
+                        <p>Complete setup for baptism celebrations</p>
+                    </div>
+                </div>
+
+                <!-- BIRTHDAYS - 1 Video + 2 Images -->
+                <div class="gallery-item" data-category="birthdays">
+                    <div class="media-indicator video">VIDEO</div>
+                    <video muted loop preload="metadata">
+                        <source src="birv1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="gallery-controls">
+                        <button class="control-btn mute-btn muted" title="Mute/Unmute">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <button class="control-btn fullscreen-btn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Birthday Surprise</h4>
+                        <p>Surprise birthday celebration setup</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="birthdays">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="50th Birthday Celebration">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>50th Birthday Celebration</h4>
+                        <p>A glamorous night of dancing and celebration</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="birthdays">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Kids Birthday Party">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Kids Birthday Party</h4>
+                        <p>Fun and colorful birthday party for children</p>
+                    </div>
+                </div>
+
+                <!-- Hidden items for "See More" functionality -->
+                <div class="gallery-item hidden" data-category="weddings">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Outdoor Wedding">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Outdoor Wedding</h4>
+                        <p>Beautiful outdoor ceremony setup</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item hidden" data-category="catering">
+                    <div class="media-indicator image">IMAGE</div>
+                    <img src="/api/placeholder/400/300" alt="Dessert Table">
+                    <div class="gallery-controls">
+                        <button class="control-btn fullscreen-btn" title="View Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>Dessert Table</h4>
+                        <p>Elegant dessert arrangements for sweet moments</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="see-more-container">
+                <button id="seeMoreBtn" class="btn">See More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fullscreen Modal -->
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <div class="fullscreen-content">
+            <button class="close-fullscreen" title="Close Fullscreen">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="fullscreen-media-container">
+                <!-- Media will be injected here -->
+            </div>
+            <div class="fullscreen-info">
+                <h3 class="fullscreen-title"></h3>
+                <p class="fullscreen-description"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replace the existing testimonials section with this one -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Client Testimonials</h2>
+                <p>Don't just take our word for it. Here's what our clients have to say about working with us.</p>
+            </div>
+            <div class="testimonial-grid" id="testimonial-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="vid1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                           ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 4 (Hidden by default) -->
+                <div class="testimonial-card hidden-testimonial">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 5 (Hidden by default) -->
+                <div class="testimonial-card hidden-testimonial">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 6 (Hidden by default) -->
+                <div class="testimonial-card hidden-testimonial">
+                    <div class="video-container">
+                        <video poster="/api/placeholder/400/225" loop>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="mute-btn" aria-label="Toggle mute">
+                                <i class="fas fa-volume-mute"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            ""
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="testimonial-author">
+                            <div class="author-image">
+                                <img src="/api/placeholder/80/80" alt="">
+                            </div>
+                            <div class="author-info">
+                                <h4></h4>
+                                <p></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- See More/Less Button -->
+            <div class="testimonials-load-more">
+                <button class="btn-load-more" id="load-more-testimonials">See More</button>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact Us</h2>
+                <p>Ready to create your next extraordinary event? Reach out today to discuss your ideas.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Location</h4>
+                                <p>123 Event Street, Suite 400<br>New York, NY 10001</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Phone</h4>
+                                <p> 954433393<br>6282912207<br>9961170249</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Email</h4>
+                                <p>eventsvyakulamatha@gmail.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Office Hours</h4>
+                                <p>Monday - Friday: 10:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+
+                    </div>
+                    <!-- Replace your existing dropdown section with this updated one -->
+                    <div class="contact-dropdown" style="position: relative; display: inline-block;">
+                        <a href="javascript:void(0)" class="btn dropdown-toggle" style="display: inline-block; margin-bottom: 0;">
+                            Contact Us <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 0.8em;"></i>
+                        </a>
+                        <div class="dropdown-menu" style="display: none; position: absolute; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); z-index: 1; border-radius: 5px; padding: 10px; margin-top: 5px; left: 0;">
+                            <a href="tel:954433393 6282912207 9961170249" style="display: block; padding: 8px 10px; text-decoration: none; color: var(--dark); transition: background-color 0.3s;">
+                                <i class="fas fa-phone" style="margin-right: 10px; color: var(--primary);"></i> Call Us: 954433393<br>6282912207<br>9961170249
+                            </a>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=eventsvyakulamath@gmail.com&su=Event Inquiry&body=Hello%20VM%20Events,%0A%0AI'm%20interested%20in%20your%20event%20planning%20services.%20I%20would%20like%20to%20inquire%20about:%0A%0A-%20Event%20type:%0A-%20Expected%20date:%0A-%20Your%20phone%20number:%0A-%20Additional%20details:%0A%0AThank%20you,%0A%0A[Your%20Name]" target="_blank" style="display: block; padding: 8px 10px; text-decoration: none; color: var(--dark); transition: background-color 0.3s;" id="emailLink">
+                                <i class="fas fa-envelope" style="margin-right: 10px; color: var(--primary);"></i> Email Us
+                            </a>
+                            <a href="https://www.instagram.com/_vm_event_z_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" style="display: block; padding: 8px 10px; text-decoration: none; color: var(--dark); transition: background-color 0.3s;">
+                                <i class="fab fa-instagram" style="margin-right: 10px; color: var(--primary);"></i> Message Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>About VM Events</h3>
+                    <p>VM Events is a premier event management company specializing in creating exceptional experiences for corporate and private clients.</p>
+                    <p>With our expertise and creative approach, we transform your vision into unforgettable events.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#portfolio">Portfolio</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Social Gatherings</a></li>
+                        <li><a href="#">Weddings</a></li>
+                        <li><a href="#">Concerts & Shows</a></li>
+                        <li><a href="#">Event Consultation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter for event tips, trends, and company updates.</p>
+                    <form>
+                        <input type="email" placeholder="Your Email" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #333;">
+                        <button type="submit" class="btn" style="width: 100%;">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 VM Events. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Scroll Animation for Header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 0);
+        });
+
+        // Gallery filtering functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const categories = document.querySelectorAll('.gallery-category');
+            const items = document.querySelectorAll('.gallery-item');
+
+            // Add click event to each category
+            categories.forEach(category => {
+                category.addEventListener('click', function () {
+                    // Remove active class from all categories
+                    categories.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked category
+                    this.classList.add('active');
+
+                    // Get category name
+                    const selectedCategory = this.textContent.toLowerCase();
+
+                    // Filter gallery items
+                    items.forEach(item => {
+                        if (selectedCategory === 'all' || item.getAttribute('data-category') === selectedCategory) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+        // Replace your existing service cards linking code with this improved version
+        document.addEventListener('DOMContentLoaded', function () {
+            // Service card to gallery category mapping
+            const serviceToGalleryMapping = {
+                'WEDDINGS': 'weddings',
+                'CATERING': 'catering',
+                'LIGHT&SOUND': 'light&sound',
+                'CAR DECORATION': 'car decoration',
+                'JUICE%TEA COUNTERS': 'juice&tea counters',
+                'BIRTHDAYS': 'birthdays'
+            };
+
+            // Add click functionality to all service cards
+            const serviceCards = document.querySelectorAll('.service-card');
+
+            serviceCards.forEach(card => {
+                const serviceTitle = card.querySelector('h3');
+                if (serviceTitle) {
+                    const serviceName = serviceTitle.textContent.trim();
+
+                    // Add pointer cursor to indicate clickable
+                    card.style.cursor = 'pointer';
+                    card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+
+                    // Add hover effect
+                    card.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateY(-5px)';
+                        this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+                    });
+
+                    card.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateY(-10px)'; // Reset to original hover state
+                        this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.1)'; // Reset to original hover state
+                    });
+
+                    // Add click event listener
+                    card.addEventListener('click', function () {
+                        const galleryCategory = serviceToGalleryMapping[serviceName];
+
+                        if (galleryCategory) {
+                            console.log("Clicking on service: " + serviceName + " -> Gallery category: " + galleryCategory);
+
+                            // Find and click the matching gallery category
+                            const galleryCategories = document.querySelectorAll('.gallery-category');
+                            let categoryFound = false;
+
+                            galleryCategories.forEach(category => {
+                                const categoryText = category.textContent.trim().toLowerCase();
+                                if (categoryText === galleryCategory) {
+                                    // Remove active class from all categories
+                                    galleryCategories.forEach(c => c.classList.remove('active'));
+
+                                    // Add active class to the target category
+                                    category.classList.add('active');
+
+                                    // Filter gallery items
+                                    const galleryItems = document.querySelectorAll('.gallery-item');
+                                    galleryItems.forEach(item => {
+                                        const itemCategory = item.getAttribute('data-category');
+                                        if (itemCategory === galleryCategory) {
+                                            item.style.display = 'block';
+                                        } else {
+                                            item.style.display = 'none';
+                                        }
+                                    });
+
+                                    // Hide the See More button for specific categories
+                                    const seeMoreBtn = document.getElementById('seeMoreBtn');
+                                    if (seeMoreBtn) {
+                                        seeMoreBtn.style.display = 'none';
+                                    }
+
+                                    categoryFound = true;
+
+                                    // Scroll to gallery section smoothly
+                                    document.querySelector('#gallery').scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    });
+                                }
+                            });
+
+                            if (!categoryFound) {
+                                console.log("Gallery category not found for: " + galleryCategory);
+                            }
+                        } else {
+                            console.log("No mapping found for service: " + serviceName);
+                        }
+                    });
+                }
+            });
+        });
+        // Add this to your JavaScript section
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the dropdown toggle and menu
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            if (dropdownToggle && dropdownMenu) {
+                // Toggle dropdown when clicking the button
+                dropdownToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (dropdownMenu.style.display === 'block') {
+                        dropdownMenu.style.display = 'none';
+                    } else {
+                        dropdownMenu.style.display = 'block';
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.style.display = 'none';
+                    }
+                });
+
+                // Add hover effect to dropdown items
+                const dropdownItems = dropdownMenu.querySelectorAll('a');
+                dropdownItems.forEach(item => {
+                    item.addEventListener('mouseover', function () {
+                        this.style.backgroundColor = '#f8f9fa';
+                    });
+                    item.addEventListener('mouseout', function () {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                });
+            }
+        });
+
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+            setTimeout(showSlides, 2000); // Change image every 2 seconds
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initial number of visible items - show only 3 at first
+            const initialItemsToShow = 3;
+            let currentlyShownItems = initialItemsToShow;
+
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const seeMoreBtn = document.getElementById('seeMoreBtn');
+
+            // Function to update visible items
+            function updateVisibleItems() {
+                // First hide all items
+                galleryItems.forEach((item, index) => {
+                    if (index < currentlyShownItems) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Update button text/visibility
+                if (currentlyShownItems >= galleryItems.length) {
+                    seeMoreBtn.textContent = 'See Less';
+                } else {
+                    seeMoreBtn.textContent = 'See More';
+                }
+            }
+
+            // Initialize visibility
+            updateVisibleItems();
+
+            // See More button click handler
+            seeMoreBtn.addEventListener('click', function () {
+                if (currentlyShownItems >= galleryItems.length) {
+                    // If showing all, reset to initial view
+                    currentlyShownItems = initialItemsToShow;
+                } else {
+                    // Show all items
+                    currentlyShownItems = galleryItems.length;
+                }
+
+                updateVisibleItems();
+            });
+
+            // Update gallery filtering functionality to work with See More button
+            const categories = document.querySelectorAll('.gallery-category');
+
+            categories.forEach(category => {
+                category.addEventListener('click', function () {
+                    // Remove active class from all categories
+                    categories.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked category
+                    this.classList.add('active');
+
+                    // Get category name
+                    const selectedCategory = this.textContent.toLowerCase();
+
+                    // Reset the currentlyShownItems when switching categories
+                    if (selectedCategory === 'all') {
+                        currentlyShownItems = initialItemsToShow;
+                        seeMoreBtn.style.display = 'inline-block';
+
+                        // Filter and show only first 3 items initially
+                        let visibleCount = 0;
+
+                        galleryItems.forEach(item => {
+                            if (visibleCount < initialItemsToShow) {
+                                item.style.display = 'block';
+                                visibleCount++;
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+
+                        seeMoreBtn.textContent = 'See More';
+                    } else {
+                        // For specific categories, show all matching items
+                        galleryItems.forEach(item => {
+                            const itemCategory = item.getAttribute('data-category');
+                            if (itemCategory === selectedCategory) {
+                                item.style.display = 'block';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+
+                        // Hide the See More button for specific categories as all matching items are already shown
+                        seeMoreBtn.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Service card interactions
+            const serviceCards = document.querySelectorAll('.service-card');
+
+            serviceCards.forEach(card => {
+                // Store the original transform and box-shadow
+                const originalTransform = 'translateY(0)';
+                const originalBoxShadow = '0 5px 15px rgba(0,0,0,0.05)';
+                const hoverTransform = 'translateY(-10px)';
+                const hoverBoxShadow = '0 15px 30px rgba(0,0,0,0.2)';
+
+                // Mouse enter event - show image
+                card.addEventListener('mouseenter', function () {
+                    const content = this.querySelector('.service-content');
+                    const image = this.querySelector('.service-image img');
+
+                    // Fade out content, show image
+                    content.style.opacity = '0';
+                    image.style.transform = 'scale(1.1)';
+                    this.style.transform = hoverTransform;
+                    this.style.boxShadow = hoverBoxShadow;
+                });
+
+                // Mouse leave event - restore gray overlay
+                card.addEventListener('mouseleave', function () {
+                    const content = this.querySelector('.service-content');
+                    const image = this.querySelector('.service-image img');
+
+                    // Fade in content, hide image
+                    content.style.opacity = '1';
+                    image.style.transform = 'scale(1)';
+                    this.style.transform = 'translateY(-5px)';  // Keep slight elevation
+                    this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+                });
+
+                // Preserve the click functionality to filter gallery
+                card.addEventListener('click', function () {
+                    const serviceTitle = this.querySelector('h3').textContent.trim();
+
+                    // Map service titles to gallery categories (keep your existing mapping logic)
+                    const serviceToGalleryMapping = {
+                        'WEDDINGS': 'weddings',
+                        'CATERING': 'catering',
+                        'LIGHT&SOUND': 'light&sound',
+                        'CAR DECORATION': 'car decoration',
+                        'JUICE&TEA COUNTERS': 'juice&tea counters',
+                        'BIRTHDAYS': 'birthdays',
+                        'BAPTISM': 'baptism'
+                    };
+
+                    const galleryCategory = serviceToGalleryMapping[serviceTitle];
+
+                    if (galleryCategory) {
+                        // Find and click the matching gallery category (using your existing code)
+                        const galleryCategories = document.querySelectorAll('.gallery-category');
+
+                        galleryCategories.forEach(category => {
+                            const categoryText = category.textContent.trim().toLowerCase();
+                            if (categoryText === galleryCategory) {
+                                // Trigger a click on the gallery category
+                                category.click();
+
+                                // Scroll to gallery section
+                                document.querySelector('#gallery').scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all gallery items
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const fullscreenModal = document.getElementById('fullscreenModal');
+            const fullscreenContent = fullscreenModal.querySelector('.fullscreen-media-container');
+            const fullscreenTitle = fullscreenModal.querySelector('.fullscreen-title');
+            const fullscreenDescription = fullscreenModal.querySelector('.fullscreen-description');
+            const closeBtn = fullscreenModal.querySelector('.close-fullscreen');
+            const seeMoreBtn = document.getElementById('seeMoreBtn');
+            const hiddenItems = document.querySelectorAll('.gallery-item.hidden');
+            let showingMore = false;
+
+            // Setup gallery items functionality
+            function setupGalleryItem(item) {
+                const video = item.querySelector('video');
+                const muteBtn = item.querySelector('.mute-btn');
+                const fullscreenBtn = item.querySelector('.fullscreen-btn');
+
+                // Auto-play video on hover
+                if (video) {
+                    // Ensure video is ready
+                    video.addEventListener('loadeddata', function () {
+                        console.log('Video loaded:', video.src);
+                    });
+
+                    // Auto-play on hover
+                    item.addEventListener('mouseenter', function () {
+                        if (video && video.readyState >= 2) {
+                            video.play().catch(e => {
+                                console.log('Video play failed:', e);
+                                // Try to load and play again
+                                video.load();
+                                setTimeout(() => {
+                                    video.play().catch(err => console.log('Retry failed:', err));
+                                }, 100);
+                            });
+                        }
+                    });
+
+                    item.addEventListener('mouseleave', function () {
+                        if (video) {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    });
+
+                    // Mute/Unmute functionality
+                    if (muteBtn) {
+                        muteBtn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (video.muted) {
+                                video.muted = false;
+                                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                                muteBtn.classList.remove('muted');
+                            } else {
+                                video.muted = true;
+                                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                                muteBtn.classList.add('muted');
+                            }
+                        });
+                    }
+                }
+
+                // Fullscreen functionality
+                if (fullscreenBtn) {
+                    fullscreenBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Fullscreen clicked');
+                        openFullscreen(item);
+                    });
+                }
+            }
+
+            // Setup all gallery items (including hidden ones)
+            const allGalleryItems = document.querySelectorAll('.gallery-item');
+            allGalleryItems.forEach(setupGalleryItem);
+
+            // Gallery filtering functionality
+            const filterBtns = document.querySelectorAll('.gallery-category');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    // Filter gallery items
+                    galleryItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'scale(1)';
+                            }, 100);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+
+            // See More functionality
+            seeMoreBtn.addEventListener('click', function () {
+                if (!showingMore) {
+                    hiddenItems.forEach(item => {
+                        item.classList.remove('hidden');
+                        // Setup functionality for newly shown items
+                        setupGalleryItem(item);
+                    });
+                    this.textContent = 'See Less';
+                    showingMore = true;
+                } else {
+                    hiddenItems.forEach(item => {
+                        item.classList.add('hidden');
+                    });
+                    this.textContent = 'See More';
+                    showingMore = false;
+
+                    // Scroll back to gallery
+                    document.getElementById('gallery').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Fullscreen functionality
+            function openFullscreen(item) {
+                console.log('Opening fullscreen for:', item);
+
+                const overlay = item.querySelector('.gallery-overlay');
+                if (!overlay) {
+                    console.error('No overlay found');
+                    return;
+                }
+
+                const titleElement = overlay.querySelector('h4');
+                const descElement = overlay.querySelector('p');
+                const title = titleElement ? titleElement.textContent : 'Media Item';
+                const description = descElement ? descElement.textContent : '';
+                const video = item.querySelector('video');
+                const image = item.querySelector('img');
+
+                fullscreenTitle.textContent = title;
+                fullscreenDescription.textContent = description;
+
+                fullscreenContent.innerHTML = '';
+
+                if (video) {
+                    console.log('Creating video clone');
+                    const videoClone = document.createElement('video');
+                    videoClone.src = video.querySelector('source').src;
+                    videoClone.controls = true;
+                    videoClone.autoplay = true;
+                    videoClone.loop = true;
+                    videoClone.style.width = '100%';
+                    videoClone.style.height = '100%';
+                    videoClone.style.objectFit = 'contain';
+                    fullscreenContent.appendChild(videoClone);
+                } else if (image) {
+                    console.log('Creating image clone');
+                    const imageClone = document.createElement('img');
+                    imageClone.src = image.src;
+                    imageClone.alt = image.alt;
+                    imageClone.style.width = '100%';
+                    imageClone.style.height = '100%';
+                    imageClone.style.objectFit = 'contain';
+                    fullscreenContent.appendChild(imageClone);
+                }
+
+                fullscreenModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                console.log('Fullscreen modal opened');
+            }
+
+            // Close fullscreen
+            function closeFullscreen() {
+                fullscreenModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+
+                // Stop any playing video
+                const video = fullscreenContent.querySelector('video');
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+
+                setTimeout(() => {
+                    fullscreenContent.innerHTML = '';
+                }, 300);
+            }
+
+            // Close button event
+            closeBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeFullscreen();
+            });
+
+            // Close when clicking on modal background
+            fullscreenModal.addEventListener('click', function (e) {
+                if (e.target === fullscreenModal) {
+                    closeFullscreen();
+                }
+            });
+
+            // Prevent closing when clicking on content
+            fullscreenModal.querySelector('.fullscreen-content').addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+            // Close with ESC key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && fullscreenModal.classList.contains('active')) {
+                    closeFullscreen();
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all video containers
+            const videoContainers = document.querySelectorAll('.video-container');
+
+            // Set up each video with proper functionality
+            videoContainers.forEach((container, index) => {
+                const video = container.querySelector('video');
+                const muteBtn = container.querySelector('.mute-btn');
+                const muteIcon = muteBtn.querySelector('i');
+
+                // Ensure video is muted by default
+                video.muted = true;
+                video.volume = 0.3; // Set a reasonable volume level when unmuted
+
+                // Update icon based on mute state
+                function updateMuteIcon() {
+                    if (video.muted) {
+                        muteIcon.className = 'fas fa-volume-mute';
+                        muteBtn.setAttribute('aria-label', 'Unmute video');
+                    } else {
+                        muteIcon.className = 'fas fa-volume-up';
+                        muteBtn.setAttribute('aria-label', 'Mute video');
+                    }
+                }
+
+                // Initialize icon
+                updateMuteIcon();
+
+                // Mute/unmute toggle
+                muteBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    video.muted = !video.muted;
+                    updateMuteIcon();
+
+                    // Add visual feedback
+                    this.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 100);
+                });
+
+                // Play video on hover
+                container.addEventListener('mouseenter', function () {
+                    video.play().catch(e => {
+                        console.log('Video play failed:', e);
+                    });
+                });
+
+                // Optional: Pause on mouse leave (you can remove this if you want continuous play)
+                container.addEventListener('mouseleave', function () {
+                    // video.pause(); // Uncomment if you want to pause on mouse leave
+                });
+
+                // Handle video load errors gracefully
+                video.addEventListener('error', function () {
+                    console.warn(`Video ${index + 1} failed to load`);
+                });
+            });
+
+            // Read more functionality
+            const readMoreLinks = document.querySelectorAll('.read-more');
+
+            readMoreLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    const testimonialText = this.previousElementSibling;
+                    testimonialText.classList.toggle('expanded');
+
+                    if (testimonialText.classList.contains('expanded')) {
+                        this.textContent = 'Read less';
+                    } else {
+                        this.textContent = 'Read more';
+                    }
+                });
+            });
+
+            // See More/Less functionality
+            const loadMoreBtn = document.getElementById('load-more-testimonials');
+            const hiddenTestimonials = document.querySelectorAll('.hidden-testimonial');
+            let testimonialsVisible = false;
+
+            loadMoreBtn.addEventListener('click', function () {
+                if (!testimonialsVisible) {
+                    // Show hidden testimonials
+                    hiddenTestimonials.forEach(card => {
+                        card.classList.remove('hidden-testimonial');
+                    });
+                    this.textContent = 'See Less';
+                    testimonialsVisible = true;
+                } else {
+                    // Hide testimonials again
+                    hiddenTestimonials.forEach(card => {
+                        card.classList.add('hidden-testimonial');
+                    });
+                    this.textContent = 'See More';
+                    testimonialsVisible = false;
+
+                    // Scroll back to top of testimonials section
+                    document.getElementById('testimonials').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Auto-play videos when section comes into view
+            const testimonialsSection = document.getElementById('testimonials');
+            let hasAutoPlayed = false;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !hasAutoPlayed) {
+                        const videos = entry.target.querySelectorAll('video');
+                        videos.forEach(video => {
+                            video.play().catch(e => {
+                                console.log('Auto-play failed:', e);
+                            });
+                        });
+                        hasAutoPlayed = true;
+                    }
+                });
+            }, {
+                threshold: 0.3
+            });
+
+            observer.observe(testimonialsSection);
+        });
+
+
+
+    </script>
+</body>
+</html>
